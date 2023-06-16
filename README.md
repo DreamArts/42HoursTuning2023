@@ -10,6 +10,7 @@ topでcpu使用率見る
 ## mysql
 クエリをいい感じに
 
+
 ## nginx
 設定変えて，プロセスどうするか
 
@@ -18,6 +19,7 @@ topでcpu使用率見る
 - 操作をしてみる（サービス）
 	- 少し変えて、変化を確かめる
 - 問題点に対して優先度をつける
+- 理解にはgpt使うのも１つ
 
 ```
 bash init.sh env-goat.ftt2306.dabaas.net ./goat_ssh_key.pem
