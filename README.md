@@ -10,6 +10,29 @@ topでcpu使用率見る
 ## mysql
 クエリをいい感じに
 
+```
+docker container ls
+```
+mysqlの欄に表示されたコンテナのIDを用いて
+```
+docker exec -i -t コンテナのID mysql
+```
+mysqlに入れると思うので，入ったら以下のコマンドで，データベースを見ます。
+```
+mysql> SHOW DATABASES;
+```
+以下のコマンドで，'app'データベースにある，テーブル一覧を見ます。
+```
+SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = 'app';
+```
+以下のコマンドで，実際に skillのテーブルを見ることができます。
+```
+select * FROM skill;
+```
+行数の多いテーブルは，以下のようにLIMITで制限します。
+```
+select * FROM user LIMIT 10;
+```
 
 ## nginx
 設定変えて，プロセスどうするか
@@ -21,9 +44,9 @@ topでcpu使用率見る
 - 問題点に対して優先度をつける
 - 理解にはgpt使うのも１つ
 
-```
+<!-- ```
 bash init.sh env-goat.ftt2306.dabaas.net ./goat_ssh_key.pem
-```
+``` -->
 
 ```
 ssh -i ./goat_ssh_key.pem azureuser@env-goat.ftt2306.dabaas.net
