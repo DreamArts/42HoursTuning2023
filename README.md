@@ -21,6 +21,10 @@ mysqlに入れると思うので，入ったら以下のコマンドで，デー
 ```
 mysql> SHOW DATABASES;
 ```
+以下のコマンドで，appテーブルを選択します。
+```
+USE app;
+```
 以下のコマンドで，'app'データベースにある，テーブル一覧を見ます。
 ```
 SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = 'app';
