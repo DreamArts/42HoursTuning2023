@@ -13,12 +13,7 @@ describe("Get User Icon API", () => {
   test("OK", async () => {
     console.log(new Date(), "start testing the Get User Icon API");
     const [userIconIdRow] = await pool.query<RowDataPacket[]>(
-      "SELECT user_icon_id \
-			FROM user \
-			JOIN (SELECT ROUND(RAND() * (SELECT MAX(user_id) FROM user)) AS random_id) AS r \
-			WHERE user.user_id >= r.random_id \
-			ORDER BY user.user_id \
-			LIMIT 1;"
+      "SELECT user_icon_id FROM user ORDER BY RAND() LIMIT 1"
     );
     const [fileNameRow] = await pool.query<RowDataPacket[]>(
       "SELECT file_name FROM file WHERE file_id = ?",
