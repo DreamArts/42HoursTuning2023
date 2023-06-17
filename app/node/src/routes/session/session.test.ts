@@ -44,6 +44,10 @@ jest.mock("../../middleware/auth", () => ({
   },
 }));
 
+afterEach(() => {
+  jest.resetAllMocks();
+});
+
 describe("POST /api/v1/session", () => {
   const mail = "mail";
   const password = "password";
@@ -55,51 +59,44 @@ describe("POST /api/v1/session", () => {
   test("OK: 201", async () => {
     jest.useFakeTimers();
     jest.setSystemTime(mockDate);
-
-    const mockGetUserIdByMailAndPassword =
-      getUserIdByMailAndPassword as jest.Mock;
-    mockGetUserIdByMailAndPassword.mockReturnValue(mockUserId);
-
-    const mockGetSessionByUserId = getSessionByUserId as jest.Mock;
-    mockGetSessionByUserId.mockReturnValue(undefined);
-
-    const mockUuid = uuidv4 as jest.Mock;
-    mockUuid.mockReturnValue(mockSessionId);
-
-    const mockGetSessionBySessionId = getSessionBySessionId as jest.Mock;
-    mockGetSessionBySessionId.mockReturnValue(mockSession);
-
+  
+    (uuidv4 as jest.Mock).mockReturnValue(mockSessionId);
+    (getUserIdByMailAndPassword as jest.Mock).mockReturnValue(mockUserId);
+    (getSessionByUserId as jest.Mock).mockReturnValue(undefined);
+    (getSessionBySessionId as jest.Mock).mockReturnValue(mockSession);
+  
+    // Rest of your test code...
     const res = await request(app)
-      .post("/api/v1/session")
-      .send({
-        mail,
-        password,
-      })
-      .set("Content-Type", "application/json");
+    .post("/api/v1/session")
+    .send({
+      mail,
+      password,
+    })
+    .set("Content-Type", "application/json");
     const cookies = res.header["set-cookie"][0];
     const sessionIdCookies = cookies
-      .split(";")
-      .find((cookie: string) => cookie.startsWith("SESSION_ID="));
-
+    .split(";")
+    .find((cookie: string) => cookie.startsWith("SESSION_ID="));
+    
     expect(res.status).toBe(201);
     expect(sessionIdCookies).toBe("SESSION_ID=sessionId");
     expect(res.body).toEqual(mockSession);
     expect(mockGetUserIdByMailAndPassword).toHaveBeenCalledWith(
       mail,
       hashPassword
-    );
-    expect(mockGetSessionByUserId).toHaveBeenCalledWith(mockUserId);
-    expect(createSession).toHaveBeenCalledWith(
-      mockSessionId,
-      mockUserId,
-      mockDate
-    );
-    expect(mockGetSessionBySessionId).toHaveBeenCalledWith(
-      mockSession.sessionId
-    );
-    jest.useRealTimers();
-  });
-
+      );
+      expect(mockGetSessionByUserId).toHaveBeenCalledWith(mockUserId);
+      expect(createSession).toHaveBeenCalledWith(
+        mockSessionId,
+        mockUserId,
+        mockDate
+        );
+        expect(mockGetSessionBySessionId).toHaveBeenCalledWith(
+          mockSession.sessionId
+          );
+          jest.useRealTimers();
+    });
+        
   test("OK: 200", async () => {
     const mockGetUserIdByMailAndPassword =
       getUserIdByMailAndPassword as jest.Mock;
