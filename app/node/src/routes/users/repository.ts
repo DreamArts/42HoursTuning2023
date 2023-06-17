@@ -271,7 +271,8 @@ export const getUserForFilter = async (
     [user.user_id]
   );
   const [skillNameRows] = await pool.query<RowDataPacket[]>(
-    `SELECT skill_name FROM skill WHERE skill_id IN (SELECT skill_id FROM skill_member WHERE user_id = ?)`,
+    // `SELECT skill_name FROM skill WHERE skill_id IN (SELECT skill_id FROM skill_member WHERE user_id = ?)`,
+		`SELECT skill_name FROM skill LEFT JOIN skill_member ON skill.skill_id = skill_member.skill_id WHERE skill_member.user_id = ?`,
     [user.user_id]
   );
 
