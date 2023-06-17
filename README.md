@@ -72,3 +72,20 @@ apiの流れを見る
 
 ## 土曜午後
 クエリの改善のやり方の共有 ->できれば役割分担
+
+
+SELECT department_name FROM department WHERE department_id = (SELECT department_id FROM department_role_member WHERE user_id = 
+
+
+SELECT department_name FROM department LEFT JOIN department_role_member ON department.department_id=department_role_member.department_id WHERE user_id = 
+
+
+SELECT department_name FROM department WHERE department_id = (SELECT department_id FROM department_role_member WHERE user_id = '90e89a6c-9000-425e-b7ce-3e857db67f72' AND belong = true);
+
+SELECT department_name FROM department LEFT JOIN department_role_member ON department.department_id=department_role_member.department_id WHERE user_id = '90e89a6c-9000-425e-b7ce-3e857db67f72' AND belong = true;
+
+SELECT skill_name FROM skill WHERE skill_id IN (SELECT skill_id FROM skill_member WHERE user_id = 'f07463eb-513c-4766-889a-b827fb7f1ef0');
+
+SELECT skill_name FROM skill LEFT JOIN skill_member ON skill.skill_id = skill_member.skill_id WHERE skill_member.user_id = 'f07463eb-513c-4766-889a-b827fb7f1ef0';
+
+

@@ -267,7 +267,8 @@ export const getUserForFilter = async (
     [user.user_icon_id]
   );
   const [departmentNameRow] = await pool.query<RowDataPacket[]>(
-    `SELECT department_name FROM department WHERE department_id = (SELECT department_id FROM department_role_member WHERE user_id = ? AND belong = true)`,
+    // `SELECT department_name FROM department WHERE department_id = (SELECT department_id FROM department_role_member WHERE user_id = ? AND belong = true)`,
+		`SELECT department_name FROM department LEFT JOIN department_role_member ON department.department_id=department_role_member.department_id WHERE user_id = ? AND belong = true`,
     [user.user_id]
   );
   const [skillNameRows] = await pool.query<RowDataPacket[]>(
