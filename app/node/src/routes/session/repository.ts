@@ -32,7 +32,7 @@ export const createSession = async (
   );
 };
 
-export const getSessionBySessionId = async (
+export const getSessionBySessionId = async ( //速い
   sessionId: string
 ): Promise<Session | undefined> => {
   const [session] = await pool.query<RowDataPacket[]>(
