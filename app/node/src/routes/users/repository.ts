@@ -239,10 +239,17 @@ export const getUserForFilter = async (
   userId?: string
 ): Promise<UserForFilter> => {
   let userRows: RowDataPacket[];
+	let offsetResult: RowDataPacket[];
   if (!userId) {
-    [userRows] = await pool.query<RowDataPacket[]>(
-      "SELECT user_id, user_name, office_id, user_icon_id FROM user ORDER BY RAND() LIMIT 1"
-    );
+		[offsetResult] = await pool.query<RowDataPacket[]>(
+			"select floor(1 + RAND() * (SELECT COUNT(user_id) FROM user)) as offsetValue"
+		);
+		console.log(offsetResult[0].offsetValue);
+		[userRows] = await pool.query<RowDataPacket[]>(
+			"SELECT user_id, user_name, office_id, user_icon_id FROM user limit 1 offset ?",
+			offsetResult[0].offsetValue
+			// "SELECT user_id, user_name, office_id, user_icon_id FROM user ORDER BY RAND() LIMIT 1;"
+		);
   } else {
     [userRows] = await pool.query<RowDataPacket[]>(
       "SELECT user_id, user_name, office_id, user_icon_id FROM user WHERE user_id = ?",
