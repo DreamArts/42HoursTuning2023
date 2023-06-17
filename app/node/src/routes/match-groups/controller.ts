@@ -34,8 +34,7 @@ matchGroupRouter.post(
       if (!(await isReqBodyValueCorrect(reqBody, res))) {
         return;
       }
-      console.log("specified condition is valid");
-
+      
       const matchGroupDetail = await createMatchGroup(reqBody);
       if (!matchGroupDetail) {
         res.status(500).json({
@@ -45,7 +44,6 @@ matchGroupRouter.post(
         return;
       }
       res.status(201).json(matchGroupDetail);
-      console.log("successfully created a new match group");
     } catch (e) {
       next(e);
     }
@@ -234,42 +232,42 @@ matchGroupRouter.get(
       if (Number.isNaN(limit) || limit < 0 || 100 < limit) {
         limit = 20;
       }
-
+      
       let offset = Math.trunc(Number(req.query.offset));
       if (Number.isNaN(offset) || offset < 0) {
         offset = 0;
       }
-
+      
       const matchGroupIds = await getMatchGroupIdsByUserId(user.userId);
-      console.log(`user participated in ${matchGroupIds.length} match groups`);
       if (matchGroupIds.length === 0) {
         res.json([]);
         return;
       }
-
+      
       const matchGroups = await getMatchGroupsByMatchGroupIds(
         matchGroupIds,
         status
-      );
-      if (matchGroups.length === 0) {
-        res.json([]);
-        console.log("no valid match groups found");
-        return;
-      }
-
-      // ステータスの降順 (openが先)・作成日の降順・マッチグループ名の昇順でソート
-      matchGroups.sort((a, b) => {
-        if (a.status === "open" && b.status === "close") return -1;
-        if (a.status === "close" && b.status === "open") return 1;
-        if (new Date(a.createdAt) > new Date(b.createdAt)) return -1;
-        if (new Date(a.createdAt) < new Date(b.createdAt)) return 1;
-        if (a.matchGroupName < b.matchGroupName) return -1;
-        if (a.matchGroupName > b.matchGroupName) return 1;
-        return 0;
-      });
-
+        );
+        if (matchGroups.length === 0) {
+          res.json([]);
+          return;
+        }
+        
+        // ステータスの降順 (openが先)・作成日の降順・マッチグループ名の昇順でソート
+        matchGroups.sort((a, b) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+        
+          if (a.status === "open" && b.status === "close") return -1;
+          if (a.status === "close" && b.status === "open") return 1;
+        
+          if (dateA > dateB) return -1;
+          if (dateA < dateB) return 1;
+        
+          return a.matchGroupName.localeCompare(b.matchGroupName);
+        });
+        
       res.json(matchGroups.slice(offset, offset + limit));
-      console.log("successfully found match groups");
     } catch (e) {
       next(e);
     }
