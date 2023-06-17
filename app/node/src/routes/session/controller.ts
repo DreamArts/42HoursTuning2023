@@ -38,9 +38,9 @@ sessionRouter.post(
       `echo -n ${password} | shasum -a 256 | awk '{printf $1}'`,
       { shell: "/bin/bash" }
     ).toString();
-
+		console.log(hashPassword);
     try {
-      const userId = await getUserIdByMailAndPassword(mail, hashPassword);
+      const userId = await getUserIdByMailAndPassword(mail, hashPassword); //creat indexで100倍速くなった
       if (!userId) {
         res.status(401).json({
           message: "メールアドレスまたはパスワードが正しくありません。",
@@ -61,8 +61,8 @@ sessionRouter.post(
       }
 
       const sessionId = uuidv4();
-      await createSession(sessionId, userId, new Date());
-      const createdSession = await getSessionBySessionId(sessionId);
+      await createSession(sessionId, userId, new Date()); //INSERT
+      const createdSession = await getSessionBySessionId(sessionId); //速い
       if (!createdSession) {
         res.status(500).json({
           message: "ログインに失敗しました。",
