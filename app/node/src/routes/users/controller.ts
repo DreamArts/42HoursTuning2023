@@ -1,12 +1,13 @@
 import express from "express";
-import { execSync } from "child_process";
 import { getUsers } from "./repository";
 import { getUserByUserId } from "./repository";
 import { getFileByFileId } from "../files/repository";
 import { SearchedUser, Target, User } from "../../model/types";
 import { getUsersByKeyword } from "./usecase";
+import * as fs from "fs";
 
 export const usersRouter = express.Router();
+
 
 // ユーザーアイコン画像取得API
 usersRouter.get(
@@ -29,10 +30,7 @@ usersRouter.get(
         return;
       }
       const path = userIcon.path;
-      // No need to resize the image
-      const data = execSync(`cat ${path} | base64`, {
-        shell: "/bin/bash",
-      });
+      const data = fs.readFileSync(path).toString('base64');
       res.status(200).json({
         fileName: userIcon.fileName,
         data: data.toString().trim(),
