@@ -29,13 +29,13 @@ usersRouter.get(
         return;
       }
       const path = userIcon.path;
-      // 500px x 500pxでリサイズ
-      const data = execSync(`convert ${path} -resize 500x500! PNG:-`, {
+      // No need to resize the image
+      const data = execSync(`cat ${path} | base64`, {
         shell: "/bin/bash",
       });
       res.status(200).json({
         fileName: userIcon.fileName,
-        data: data.toString("base64"),
+        data: data.toString().trim(),
       });
       console.log("successfully get user icon");
     } catch (e) {
@@ -43,6 +43,7 @@ usersRouter.get(
     }
   }
 );
+
 
 // ユーザー一覧取得API
 usersRouter.get(
