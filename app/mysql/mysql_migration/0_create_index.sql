@@ -14,3 +14,4 @@ ALTER TABLE skill_member ADD INDEX index_skill_member_skill_id(skill_id);
 ALTER TABLE session ADD INDEX index_session_id(session_id);
 ALTER TABLE session ADD INDEX index_linked_user_id(linked_user_id);
 ALTER TABLE match_group_member ADD INDEX index_match_group_member_user_id(user_id);
+ALTER TABLE skill ADD INDEX index_skill_id(skill_id);
