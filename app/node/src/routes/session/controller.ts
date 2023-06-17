@@ -61,7 +61,7 @@ sessionRouter.post(
       }
 
       const sessionId = uuidv4();
-      await createSession(sessionId, userId, new Date()); //INSERT
+      await createSession(sessionId, userId, new Date()); //INSERTをやっている
       const createdSession = await getSessionBySessionId(sessionId); //速い
       if (!createdSession) {
         res.status(500).json({
