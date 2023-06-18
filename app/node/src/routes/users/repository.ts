@@ -143,7 +143,7 @@ export const getUsersByDepartmentName = async (
   departmentName: string
 ): Promise<SearchedUser[]> => {
   const [departmentIdRows] = await pool.query<RowDataPacket[]>(
-    `SELECT department_id FROM department WHERE department_name LIKE ? AND active = true`,
+    `SELECT department_id FROM department WHERE active = true AND department_name LIKE ?`,
     [`%${departmentName}%`]
   );
   const departmentIds: string[] = departmentIdRows.map(
@@ -175,7 +175,7 @@ export const getUsersByRoleName = async (
   }
 
   const [userIdRows] = await pool.query<RowDataPacket[]>(
-    `SELECT user_id FROM department_role_member WHERE role_id IN (?) AND belong = true`,
+    `SELECT user_id FROM department_role_member WHERE belong = true AND role_id IN (?)`,
     [roleIds]
   );
   const userIds: string[] = userIdRows.map((row) => row.user_id);
