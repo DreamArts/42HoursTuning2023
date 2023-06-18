@@ -1,11 +1,11 @@
 import express from "express";
-import { execSync } from "child_process";
+// import { execSync } from "child_process";
 import { getUsers } from "./repository";
 import { getUserByUserId } from "./repository";
 import { getFileByFileId } from "../files/repository";
 import { SearchedUser, Target, User } from "../../model/types";
 import { getUsersByKeyword } from "./usecase";
-
+import * as fs from 'fs'
 export const usersRouter = express.Router();
 
 // ユーザーアイコン画像取得API
@@ -29,13 +29,17 @@ usersRouter.get(
         return;
       }
       const path = userIcon.path;
+			
+			const filedata = fs.readFileSync(path);
+			// const imageData = Uint8Array.from(filedata);
+			const imageData = Buffer.from(filedata);
       // 500px x 500pxでリサイズ
-      const data = execSync(`convert ${path} -resize 500x500! PNG:-`, {
-        shell: "/bin/bash",
-      });
+      // const data = execSync(`convert ${path} -resize 500x500! PNG:-`, {
+      //   shell: "/bin/bash",
+      // });
       res.status(200).json({
         fileName: userIcon.fileName,
-        data: data.toString("base64"),
+        data: imageData.toString("base64"),
       });
       console.log("successfully get user icon");
     } catch (e) {
