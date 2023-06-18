@@ -4,11 +4,11 @@
 # リストア・マイグレーション・e2eテスト・負荷試験・採点の順で実施してくれるスクリプト。
 # ==================================
 
-(cd benchmarker && bash restore_and_migration.sh)
-if [ $? -ne 0 ]; then
-    echo "採点フローを中断します。"
-    exit 1
-fi
+# (cd benchmarker && bash restore_and_migration.sh)
+# if [ $? -ne 0 ]; then
+#     echo "採点フローを中断します。"
+#     exit 1
+# fi
 
 # e2eテスト
 if [[ $HOSTNAME == env-* ]]; then

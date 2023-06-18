@@ -84,23 +84,23 @@ export const getUsersByUserIds = async (
   let users: SearchedUser[] = [];
   for (const userId of userIds) {
     const [userRows] = await pool.query<RowDataPacket[]>(
-      "SELECT user_id, user_name, kana, entry_date, office_id, user_icon_id FROM user WHERE user_id = ?",
+      "SELECT user_id, user_name, kana, entry_date, user.office_id, user_icon_id, office_name, file_name FROM user LEFT JOIN office ON user.office_id = office.office_id LEFT JOIN file ON user.user_icon_id = file.file_id WHERE user_id = ?",
       [userId]
     );
     if (userRows.length === 0) {
       continue;
     }
 
-    const [officeRows] = await pool.query<RowDataPacket[]>(
-      `SELECT office_name FROM office WHERE office_id = ?`,
-      [userRows[0].office_id]
-    );
-    const [fileRows] = await pool.query<RowDataPacket[]>(
-      `SELECT file_name FROM file WHERE file_id = ?`,
-      [userRows[0].user_icon_id]
-    );
-    userRows[0].office_name = officeRows[0].office_name;
-    userRows[0].file_name = fileRows[0].file_name;
+    // const [officeRows] = await pool.query<RowDataPacket[]>(
+    //   `SELECT office_name FROM office WHERE office_id = ?`,
+    //   [userRows[0].office_id]
+    // );
+    // const [fileRows] = await pool.query<RowDataPacket[]>(
+    //   `SELECT file_name FROM file WHERE file_id = ?`,
+    //   [userRows[0].user_icon_id]
+    // );
+    // userRows[0].office_name = officeRows[0].office_name;
+    // userRows[0].file_name = fileRows[0].file_name;
 
     users = users.concat(convertToSearchedUser(userRows));
   }
