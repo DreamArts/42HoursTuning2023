@@ -1,5 +1,5 @@
 import express from "express";
-import { execSync } from "child_process";
+// import { execSync } from "child_process";
 import { v4 as uuidv4 } from "uuid";
 import { getUserIdByMailAndPassword } from "../users/repository";
 import {
@@ -8,6 +8,7 @@ import {
   getSessionBySessionId,
   deleteSessions,
 } from "./repository";
+import crypto from 'crypto';
 
 export const sessionRouter = express.Router();
 
@@ -34,10 +35,7 @@ sessionRouter.post(
 
     const { mail, password }: { mail: string; password: string } = req.body;
 
-    const hashPassword = execSync(
-      `echo -n ${password} | shasum -a 256 | awk '{printf $1}'`,
-      { shell: "/bin/bash" }
-    ).toString();
+    const hashPassword = crypto.createHash('sha256').update(password, 'utf8').digest('hex');
 		console.log(hashPassword);
     try {
       const userId = await getUserIdByMailAndPassword(mail, hashPassword); //creat indexで100倍速くなった
