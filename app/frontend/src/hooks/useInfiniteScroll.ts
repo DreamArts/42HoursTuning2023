@@ -7,7 +7,7 @@ interface Props {
   handleError: (error: Error) => void;
 }
 
-export const LIMIT = 100;
+export const LIMIT = 50;
 
 export const useInfiniteScroll = <Response>(props: Props) => {
   const [hasMore, setHasMore] = useState(true);
