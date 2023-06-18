@@ -242,7 +242,7 @@ export const getUserForFilter = async (
 	let offsetResult: RowDataPacket[];
   if (!userId) {
 		[offsetResult] = await pool.query<RowDataPacket[]>(
-			"select floor(1 + RAND() * (SELECT COUNT(user_id) FROM user)) as offsetValue"
+			"select floor(1 + RAND() * (SELECT COUNT(user_id) FROM user) / 4) as offsetValue"
 		);
 		console.log(offsetResult[0].offsetValue);
 		[userRows] = await pool.query<RowDataPacket[]>(
