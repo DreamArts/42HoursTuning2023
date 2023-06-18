@@ -8,10 +8,10 @@ export const hasSkillNameRecord = async (
   skillName: string
 ): Promise<boolean> => {
   const [rows] = await pool.query<RowDataPacket[]>(
-    "SELECT * FROM skill WHERE EXISTS (SELECT * FROM skill WHERE skill_name = ?)",
+    "SELECT EXISTS(SELECT 1 FROM skill WHERE skill_name = ?) as exist",
     [skillName]
   );
-  return rows.length > 0;
+  return rows[0]?.exist ? true : false;
 };
 
 export const getUserIdsBeforeMatched = async (
@@ -46,12 +46,14 @@ export const insertMatchGroup = async (matchGroupDetail: MatchGroupDetail) => {
     ]
   );
 
-  for (const member of matchGroupDetail.members) {
-    await pool.query<RowDataPacket[]>(
-      "INSERT INTO match_group_member (match_group_id, user_id) VALUES (?, ?)",
-      [matchGroupDetail.matchGroupId, member.userId]
-    );
-  }
+  let memberValues = matchGroupDetail.members.map((member) => {
+    return [matchGroupDetail.matchGroupId, member.userId];
+  });
+
+  await pool.query<RowDataPacket[]>(
+    "INSERT INTO match_group_member (match_group_id, user_id) VALUES ?",
+    [memberValues]
+  );
 };
 
 export const getMatchGroupDetailByMatchGroupId = async (
@@ -101,17 +103,14 @@ export const getMatchGroupsByMatchGroupIds = async (
   matchGroupIds: string[],
   status: string
 ): Promise<MatchGroup[]> => {
-  let matchGroups: MatchGroup[] = [];
-  for (const matchGroupId of matchGroupIds) {
-    const matchGroupDetail = await getMatchGroupDetailByMatchGroupId(
-      matchGroupId,
-      status
-    );
-    if (matchGroupDetail) {
-      const { description: _description, ...matchGroup } = matchGroupDetail;
-      matchGroups = matchGroups.concat(matchGroup);
-    }
-  }
+  const matchGroupPromises = matchGroupIds.map((matchGroupId) => getMatchGroupDetailByMatchGroupId(matchGroupId, status));
 
-  return matchGroups;
+  const matchGroupDetails = await Promise.all(matchGroupPromises);
+  
+  return matchGroupDetails
+    .filter(matchGroupDetail => matchGroupDetail !== undefined)
+    .map(matchGroupDetail => {
+      const { description: _description, ...matchGroup } = matchGroupDetail!;
+      return matchGroup;
+    });
 };
